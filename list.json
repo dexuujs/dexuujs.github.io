@@ -1,0 +1,20 @@
+[
+  {
+    "name": "The Lightning Rod",
+    "creator": "Krazyman50",
+    "difficulty": "Extreme Demon",
+    "link": "https://example.com/the-lightning-rod"
+  },
+  {
+    "name": "Sonic Wave",
+    "creator": "Cyclic",
+    "difficulty": "Extreme Demon",
+    "link": "https://example.com/sonic-wave"
+  },
+  {
+    "name": "Cataclysm",
+    "creator": "ZenthicAlpha",
+    "difficulty": "Extreme Demon",
+    "link": "https://example.com/cataclysm"
+  }
+]
