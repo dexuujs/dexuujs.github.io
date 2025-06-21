@@ -104,7 +104,7 @@
     const li = document.createElement('li');
     li.innerHTML = `
       <img src="demonicon.webp" alt="demon icon" class="demon-icon" /> 
-      <strong class="place">Top ${place}</strong> - ${demon.name}
+      <strong class="place">${place}.</strong> - ${demon.name}
     `;
     li.addEventListener('click', () => {
       selectDemon(index);
