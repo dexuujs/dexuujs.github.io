@@ -105,10 +105,12 @@
 
     function createDemonListItem(demon, index) {
     const li = document.createElement('li');
-        li.innerHTML = `
-        <img src="demonicon.webp" alt="demon icon" class="demon-icon" /> 
-        <strong class="place">Top ${demon.place ?? 'N/A'}</strong> - ${demon.name}
-        `;
+    li.innerHTML = `
+    <img src="demonicon.webp" alt="demon icon" class="demon-icon" /> 
+    <strong class="place">Top ${demon.place ?? 'N/A'}</strong> - ${demon.name}
+    `;
+
+    console.log(demon);
 
     li.addEventListener('click', () => {
         selectDemon(index);
