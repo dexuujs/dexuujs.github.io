@@ -43,6 +43,8 @@
     padding: 0.75rem 1rem;
     cursor: pointer;
     border-bottom: 1px solid var(--table-border);
+    display: flex;
+    align-items: center;
   }
   #sidebar li:hover {
     background-color: var(--table-row-hover);
@@ -52,6 +54,11 @@
     color: #121212;
     font-weight: bold;
   }
+  .demon-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+  }
   #content {
     flex-grow: 1;
     padding: 1.5rem;
@@ -60,9 +67,6 @@
   h1 {
     margin-top: 0;
     color: var(--accent);
-  }
-  .demon-icon {
-    margin-right: 0.3rem;
   }
   iframe {
     margin-top: 1rem;
@@ -93,7 +97,7 @@
 
   function createDemonListItem(demon, index) {
     const li = document.createElement('li');
-    li.innerHTML = `<span class="demon-icon">🔥</span> ${demon.name}`;
+    li.innerHTML = `<img src="demonicon.webp" alt="demon icon" class="demon-icon" /> ${demon.name}`;
     li.addEventListener('click', () => {
       selectDemon(index);
     });
