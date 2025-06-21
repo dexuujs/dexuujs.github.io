@@ -1,20 +1,16 @@
 [
   {
-    "name": "The Lightning Rod",
-    "creator": "Krazyman50",
+    "place": 1,
+    "name": "Example Demon",
+    "creator": "Dexu",
     "difficulty": "Extreme Demon",
-    "link": "https://example.com/the-lightning-rod"
+    "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
   },
   {
-    "name": "Sonic Wave",
-    "creator": "Cyclic",
-    "difficulty": "Extreme Demon",
-    "link": "https://example.com/sonic-wave"
-  },
-  {
-    "name": "Cataclysm",
-    "creator": "ZenthicAlpha",
-    "difficulty": "Extreme Demon",
-    "link": "https://example.com/cataclysm"
+    "place": 2,
+    "name": "Second Demon",
+    "creator": "Someone",
+    "difficulty": "Insane Demon",
+    "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
   }
 ]
