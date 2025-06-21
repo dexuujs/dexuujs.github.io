@@ -28,29 +28,34 @@
     <tbody id="demonlist-body"></tbody>
   </table>
 
-  <script>
+    <script>
     async function loadDemonlist() {
-      try {
+    try {
         const response = await fetch('demonlist.json');
-        if (!response.ok) throw new Error('Failed to load demonlist.json');
-        const demons = await response.json();
+        console.log('Fetch status:', response.status, response.headers.get('content-type'));
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const text = await response.text();
+        console.log('Raw JSON:', text.slice(0, 200)); // preview first 200 chars
+        const demons = JSON.parse(text);
+        console.log('Parsed JSON array length:', Array.isArray(demons) ? demons.length : 'not an array');
         const tbody = document.getElementById('demonlist-body');
         demons.forEach(demon => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
             <td>${demon.name}</td>
             <td>${demon.creator}</td>
             <td>${demon.difficulty}</td>
-            <td><a href="${demon.link}" target="_blank" rel="noopener noreferrer">Link</a></td>
-          `;
-          tbody.appendChild(tr);
+            <td><a href="${demon.link}" target="_blank">Link</a></td>
+        `;
+        tbody.appendChild(tr);
         });
-      } catch (err) {
+    } catch (err) {
+        console.error('Detailed error:', err);
         document.body.innerHTML = '<p style="color:red;">Error loading demonlist.</p>';
-        console.error(err);
-      }
+    }
     }
     loadDemonlist();
-  </script>
+    </script>
+
 </body>
 </html>
