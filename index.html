@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Demonlist with Colored Place Numbers</title>
+<title>Multi-List Demon Site</title>
 <style>
+  /* Basic dark mode & layout styles */
   :root {
     --bg: #121212;
     --fg: #e0e0e0;
@@ -25,30 +26,46 @@
     background-color: #181818;
     border-right: 1px solid var(--table-border);
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
   }
-  #sidebar h2 {
-    text-align: center;
-    padding: 1rem;
-    margin: 0;
+  #list-selector {
+    display: flex;
     border-bottom: 1px solid var(--table-border);
+  }
+  #list-selector button {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--fg);
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s;
+  }
+  #list-selector button.active {
+    border-bottom-color: var(--accent);
     color: var(--accent);
   }
-  #sidebar ul {
+  #demon-list {
     list-style: none;
     padding: 0;
     margin: 0;
+    overflow-y: auto;
+    flex-grow: 1;
   }
-  #sidebar li {
+  #demon-list li {
     padding: 0.75rem 1rem;
     cursor: pointer;
     border-bottom: 1px solid var(--table-border);
     display: flex;
     align-items: center;
   }
-  #sidebar li:hover {
+  #demon-list li:hover {
     background-color: var(--table-row-hover);
   }
-  #sidebar li.active {
+  #demon-list li.active {
     background-color: var(--accent);
     color: #121212;
     font-weight: bold;
@@ -93,7 +110,12 @@
 <body>
 
 <div id="sidebar">
-  <h2>Demonlist</h2>
+  <div id="list-selector">
+    <button data-list="demons" class="active">Demon List</button>
+    <button data-list="challenges">Challenge List</button>
+    <button data-list="impossibles">Impossible List</button>
+    <button data-list="easiest">Easiest List</button>
+  </div>
   <ul id="demon-list"></ul>
 </div>
 
@@ -103,12 +125,24 @@
 </div>
 
 <script>
-  const demonsUrl = 'demonlist.json';
+  const demonsUrl = 'multilist.json'; // your combined JSON file
+
   const demonListEl = document.getElementById('demon-list');
   const demonDetailEl = document.getElementById('demon-detail');
   const contentTitle = document.querySelector('#content h1');
+  const listButtons = document.querySelectorAll('#list-selector button');
 
-  let demons = [];
+  let allData = {};
+  let currentListName = 'demons';
+  let currentDemons = [];
+
+  // Map list name to icon file
+  const icons = {
+    demons: 'demonicon.webp',
+    challenges: 'challengeicon.webp',
+    impossibles: 'impossibleicon.webp',
+    easiest: 'easyicon.webp'
+  };
 
   function createDemonListItem(demon, index) {
     const placeNum = demon.place !== undefined ? demon.place : null;
@@ -120,9 +154,11 @@
 
     const placeText = placeNum !== null ? placeNum + '.' : '';
 
+    const iconSrc = icons[currentListName] || 'demonicon.webp';
+
     const li = document.createElement('li');
     li.innerHTML = `
-      <img src="demonicon.webp" alt="demon icon" class="demon-icon" /> 
+      <img src="${iconSrc}" alt="${currentListName} icon" class="demon-icon" /> 
       <strong class="${placeClass} place">${placeText}</strong> ${demon.name}
     `;
     li.addEventListener('click', () => {
@@ -132,7 +168,7 @@
   }
 
   function selectDemon(index) {
-    const demon = demons[index];
+    const demon = currentDemons[index];
     if (!demon) return;
 
     Array.from(demonListEl.children).forEach((el, i) => {
@@ -155,26 +191,42 @@
     `;
   }
 
-  async function loadDemons() {
+  function loadList(listName) {
+    currentListName = listName;
+    currentDemons = allData[listName] || [];
+    demonListEl.innerHTML = '';
+
+    currentDemons.forEach((demon, i) => {
+      demonListEl.appendChild(createDemonListItem(demon, i));
+    });
+
+    contentTitle.textContent = currentDemons.length > 0 ? currentDemons[0].name : 'No items found';
+    demonDetailEl.innerHTML = '';
+    if (currentDemons.length > 0) selectDemon(0);
+  }
+
+  listButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      listButtons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+      loadList(button.dataset.list);
+    });
+  });
+
+  async function loadData() {
     try {
       const res = await fetch(demonsUrl);
-      if (!res.ok) throw new Error('Failed to load demonlist.json');
-      demons = await res.json();
-
-      demonListEl.innerHTML = '';
-      demons.forEach((demon, i) => {
-        demonListEl.appendChild(createDemonListItem(demon, i));
-      });
-
-      if (demons.length > 0) selectDemon(0);
+      if (!res.ok) throw new Error('Failed to load data JSON');
+      allData = await res.json();
+      loadList(currentListName);
     } catch (err) {
-      contentTitle.textContent = 'Error loading demonlist.';
+      contentTitle.textContent = 'Error loading data.';
       demonDetailEl.textContent = '';
       console.error(err);
     }
   }
 
-  loadDemons();
+  loadData();
 </script>
 
 </body>

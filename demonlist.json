@@ -1,16 +1,38 @@
-[
-  {
-    "place": 1,
-    "name": "Example Demon",
-    "creator": "Dexu",
-    "difficulty": "Extreme Demon",
-    "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-  },
-  {
-    "place": 2,
-    "name": "Second Demon",
-    "creator": "Someone",
-    "difficulty": "Insane Demon",
-    "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-  }
-]
+{
+  "demons": [
+    {
+      "place": 1,
+      "name": "The Lightning Rod",
+      "creator": "Dexu",
+      "difficulty": "Extreme Demon",
+      "link": "https://youtube.com/..."
+    }
+  ],
+  "challenges": [
+    {
+      "place": 1,
+      "name": "Challenge 1",
+      "creator": "Someone",
+      "difficulty": "Hard",
+      "link": "https://youtube.com/..."
+    }
+  ],
+  "impossibles": [
+    {
+      "place": 1,
+      "name": "Impossible 1",
+      "creator": "Nobody",
+      "difficulty": "Impossible",
+      "link": "https://youtube.com/..."
+    }
+  ],
+  "easiest": [
+    {
+      "place": 1,
+      "name": "Easy Peasy",
+      "creator": "Newbie",
+      "difficulty": "Easy",
+      "link": "https://youtube.com/..."
+    }
+  ]
+}
