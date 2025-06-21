@@ -141,6 +141,13 @@
   <div id="main">
     <div id="sidebar">
       <ul id="demon-list"></ul>
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Search..."
+        style="width: 100%; padding: 0.5rem 1rem; background: #111; color: white; border: none; border-bottom: 1px solid #333;"
+      />
+
     </div>
     <div id="content">
       <h1>Select a demon from the list</h1>
@@ -211,17 +218,32 @@
       `;
     }
 
-    function loadList(listName) {
-      currentListName = listName;
-      currentDemons = allData[listName] || [];
-      demonListEl.innerHTML = '';
-      currentDemons.forEach((demon, i) => {
-        demonListEl.appendChild(createDemonListItem(demon, i));
-      });
+    function renderFilteredList() {
+        const filterText = document.getElementById('search-input').value.toLowerCase();
+        demonListEl.innerHTML = '';
 
-      contentTitle.textContent = currentDemons.length > 0 ? currentDemons[0].name : 'No items found';
-      demonDetailEl.innerHTML = '';
-      if (currentDemons.length > 0) selectDemon(0);
+        const filtered = currentDemons.filter(d => d.name.toLowerCase().includes(filterText));
+
+        filtered.forEach((demon, i) => {
+            demonListEl.appendChild(createDemonListItem(demon, i));
+        });
+
+        if (filtered.length > 0) selectDemon(currentDemons.indexOf(filtered[0]));
+        else {
+            contentTitle.textContent = 'No matching results';
+            demonDetailEl.innerHTML = '';
+        }
+    }
+
+    document.getElementById('search-input').addEventListener('input', () => {
+        renderFilteredList();
+    });
+
+
+    function loadList(listName) {
+        currentListName = listName;
+        currentDemons = allData[listName] || [];
+        renderFilteredList(); // <-- renders filtered demons
     }
 
     listButtons.forEach(button => {
