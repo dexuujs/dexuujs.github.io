@@ -1,112 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Demonlist</title>
-    <style>
-    :root {
-        --bg: #121212;
-        --fg: #e0e0e0;
-        --accent: #1e88e5;
-        --table-header: #1f1f1f;
-        --table-border: #2a2a2a;
-        --table-row-hover: #1a1a1a;
-    }
-
-    body {
-        font-family: 'Segoe UI', sans-serif;
-        background-color: var(--bg);
-        color: var(--fg);
-        max-width: 900px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-    }
-
-    h1 {
-        text-align: center;
-        color: var(--accent);
-        font-weight: 500;
-    }
-
-    table {
-        border-collapse: collapse;
-        width: 100%;
-        margin-top: 1rem;
-    }
-
-    th, td {
-        border: 1px solid var(--table-border);
-        padding: 0.5rem;
-        text-align: left;
-    }
-
-    th {
-        background-color: var(--table-header);
-    }
-
-    tr:hover {
-        background-color: var(--table-row-hover);
-    }
-
-    a {
-        color: var(--accent);
-        text-decoration: none;
-    }
-
-    a:hover {
-        text-decoration: underline;
-    }
-
-    ::selection {
-        background-color: var(--accent);
-        color: #fff;
-    }
-    </style>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Demonlist with Sidebar & Detail</title>
+<style>
+  :root {
+    --bg: #121212;
+    --fg: #e0e0e0;
+    --accent: #1e88e5;
+    --table-header: #1f1f1f;
+    --table-border: #2a2a2a;
+    --table-row-hover: #1a1a1a;
+  }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--bg);
+    color: var(--fg);
+    display: flex;
+    height: 100vh;
+  }
+  #sidebar {
+    width: 220px;
+    background-color: #181818;
+    border-right: 1px solid var(--table-border);
+    overflow-y: auto;
+  }
+  #sidebar h2 {
+    text-align: center;
+    padding: 1rem;
+    margin: 0;
+    border-bottom: 1px solid var(--table-border);
+    color: var(--accent);
+  }
+  #sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  #sidebar li {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--table-border);
+  }
+  #sidebar li:hover {
+    background-color: var(--table-row-hover);
+  }
+  #sidebar li.active {
+    background-color: var(--accent);
+    color: #121212;
+    font-weight: bold;
+  }
+  #content {
+    flex-grow: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+  }
+  h1 {
+    margin-top: 0;
+    color: var(--accent);
+  }
+  .demon-icon {
+    margin-right: 0.3rem;
+  }
+  iframe {
+    margin-top: 1rem;
+    max-width: 100%;
+    border: none;
+  }
+</style>
 </head>
 <body>
-  <h1>Demonlist</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Creator</th>
-        <th>Difficulty</th>
-        <th>Link</th>
-      </tr>
-    </thead>
-    <tbody id="demonlist-body"></tbody>
-  </table>
 
-    <script>
-    async function loadDemonlist() {
+<div id="sidebar">
+  <h2>Demonlist</h2>
+  <ul id="demon-list"></ul>
+</div>
+
+<div id="content">
+  <h1>Select a demon from the sidebar</h1>
+  <div id="demon-detail"></div>
+</div>
+
+<script>
+  const demonsUrl = 'demonlist.json';
+  const demonListEl = document.getElementById('demon-list');
+  const demonDetailEl = document.getElementById('demon-detail');
+  const contentTitle = document.querySelector('#content h1');
+
+  let demons = [];
+
+  function createDemonListItem(demon, index) {
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="demon-icon">🔥</span> ${demon.name}`;
+    li.addEventListener('click', () => {
+      selectDemon(index);
+    });
+    return li;
+  }
+
+  function selectDemon(index) {
+    const demon = demons[index];
+    if (!demon) return;
+
+    // Update active class in sidebar
+    Array.from(demonListEl.children).forEach((el, i) => {
+      el.classList.toggle('active', i === index);
+    });
+
+    // Update detail view
+    contentTitle.textContent = demon.name;
+    demonDetailEl.innerHTML = `
+      <p><strong>Creator:</strong> ${demon.creator}</p>
+      <p><strong>Difficulty:</strong> ${demon.difficulty}</p>
+      <p><strong>Video:</strong></p>
+      <iframe
+        width="560"
+        height="315"
+        src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+        title="YouTube video player"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    `;
+  }
+
+  async function loadDemons() {
     try {
-        const response = await fetch('demonlist.json');
-        console.log('Fetch status:', response.status, response.headers.get('content-type'));
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        const text = await response.text();
-        console.log('Raw JSON:', text.slice(0, 200)); // preview first 200 chars
-        const demons = JSON.parse(text);
-        console.log('Parsed JSON array length:', Array.isArray(demons) ? demons.length : 'not an array');
-        const tbody = document.getElementById('demonlist-body');
-        demons.forEach(demon => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${demon.name}</td>
-            <td>${demon.creator}</td>
-            <td>${demon.difficulty}</td>
-            <td><a href="${demon.link}" target="_blank">Link</a></td>
-        `;
-        tbody.appendChild(tr);
-        });
+      const res = await fetch(demonsUrl);
+      if (!res.ok) throw new Error('Failed to load demonlist.json');
+      demons = await res.json();
+
+      demonListEl.innerHTML = '';
+      demons.forEach((demon, i) => {
+        demonListEl.appendChild(createDemonListItem(demon, i));
+      });
+
+      if (demons.length > 0) selectDemon(0);
     } catch (err) {
-        console.error('Detailed error:', err);
-        document.body.innerHTML = '<p style="color:red;">Error loading demonlist.</p>';
+      contentTitle.textContent = 'Error loading demonlist.';
+      demonDetailEl.textContent = '';
+      console.error(err);
     }
-    }
-    loadDemonlist();
-    </script>
+  }
+
+  loadDemons();
+</script>
 
 </body>
 </html>
