@@ -77,6 +77,21 @@
     font-weight: bold;
     color: var(--accent);
   }
+  .place-1 {
+    color: gold;
+  }
+
+  .place-2 {
+    color: silver;
+  }
+
+  .place-3 {
+    color: #cd7f32; /* bronze */
+  }
+
+  .place-default {
+    color: white;
+  }
 </style>
 </head>
 <body>
@@ -99,18 +114,26 @@
 
   let demons = [];
 
-  function createDemonListItem(demon, index) {
-    const place = demon.place !== undefined ? demon.place : 'N/A';
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <img src="demonicon.webp" alt="demon icon" class="demon-icon" /> 
-      <strong class="place">${place}.</strong> - ${demon.name}
-    `;
-    li.addEventListener('click', () => {
-      selectDemon(index);
-    });
-    return li;
-  }
+    function createDemonListItem(demon, index) {
+        const placeNum = demon.place !== undefined ? demon.place : null;
+
+        let placeClass = 'place-default';
+        if (placeNum === 1) placeClass = 'place-1';
+        else if (placeNum === 2) placeClass = 'place-2';
+        else if (placeNum === 3) placeClass = 'place-3';
+
+        const placeText = placeNum !== null ? placeNum + '.' : '';
+
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <img src="demonicon.webp" alt="demon icon" class="demon-icon" /> 
+            <strong class="${placeClass} place">${placeText}</strong> ${demon.name}
+        `;
+        li.addEventListener('click', () => {
+            selectDemon(index);
+        });
+        return li;
+    }
 
   function selectDemon(index) {
     const demon = demons[index];
