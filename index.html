@@ -45,6 +45,21 @@
       color: var(--accent);
     }
 
+    #search-container {
+      background: #101010;
+      border-bottom: 1px solid var(--table-border);
+      padding: 0.5rem;
+    }
+
+    #search-input {
+      width: 100%;
+      padding: 0.5rem 1rem;
+      background: #111;
+      color: white;
+      border: none;
+      font-size: 1rem;
+    }
+
     #main {
       display: flex;
       flex: 1;
@@ -119,7 +134,7 @@
     }
 
     .place-3 {
-      color: #cd7f32; /* bronze */
+      color: #cd7f32;
     }
 
     .place-default {
@@ -129,7 +144,7 @@
 </head>
 <body>
 
-  <!-- Independent tab selector -->
+  <!-- Tabs at top -->
   <div id="list-selector">
     <button data-list="demons" class="active">Demon List</button>
     <button data-list="challenges">Challenge List</button>
@@ -137,17 +152,15 @@
     <button data-list="easiest">Easiest List</button>
   </div>
 
+  <!-- Search bar always visible -->
+  <div id="search-container">
+    <input type="text" id="search-input" placeholder="Search..." />
+  </div>
+
   <!-- Main area -->
   <div id="main">
     <div id="sidebar">
       <ul id="demon-list"></ul>
-      <input
-        type="text"
-        id="search-input"
-        placeholder="Search..."
-        style="width: 100%; padding: 0.5rem 1rem; background: #111; color: white; border: none; border-bottom: 1px solid #333;"
-      />
-
     </div>
     <div id="content">
       <h1>Select a demon from the list</h1>
@@ -161,6 +174,7 @@
     const demonDetailEl = document.getElementById('demon-detail');
     const contentTitle = document.querySelector('#content h1');
     const listButtons = document.querySelectorAll('#list-selector button');
+    const searchInput = document.getElementById('search-input');
 
     let allData = {};
     let currentListName = 'demons';
@@ -219,31 +233,26 @@
     }
 
     function renderFilteredList() {
-        const filterText = document.getElementById('search-input').value.toLowerCase();
-        demonListEl.innerHTML = '';
+      const filterText = searchInput.value.toLowerCase();
+      demonListEl.innerHTML = '';
 
-        const filtered = currentDemons.filter(d => d.name.toLowerCase().includes(filterText));
+      const filtered = currentDemons.filter(d => d.name.toLowerCase().includes(filterText));
 
-        filtered.forEach((demon, i) => {
-            demonListEl.appendChild(createDemonListItem(demon, i));
-        });
+      filtered.forEach((demon, i) => {
+        demonListEl.appendChild(createDemonListItem(demon, i));
+      });
 
-        if (filtered.length > 0) selectDemon(currentDemons.indexOf(filtered[0]));
-        else {
-            contentTitle.textContent = 'No matching results';
-            demonDetailEl.innerHTML = '';
-        }
+      if (filtered.length > 0) selectDemon(currentDemons.indexOf(filtered[0]));
+      else {
+        contentTitle.textContent = 'No matching results';
+        demonDetailEl.innerHTML = '';
+      }
     }
 
-    document.getElementById('search-input').addEventListener('input', () => {
-        renderFilteredList();
-    });
-
-
     function loadList(listName) {
-        currentListName = listName;
-        currentDemons = allData[listName] || [];
-        renderFilteredList(); // <-- renders filtered demons
+      currentListName = listName;
+      currentDemons = allData[listName] || [];
+      renderFilteredList();
     }
 
     listButtons.forEach(button => {
@@ -253,6 +262,8 @@
         loadList(button.dataset.list);
       });
     });
+
+    searchInput.addEventListener('input', renderFilteredList);
 
     async function loadData() {
       try {
