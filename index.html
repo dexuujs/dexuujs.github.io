@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Demonlist with Sidebar & Detail</title>
+<title>Demonlist with Sidebar & Place Number</title>
 <style>
   :root {
     --bg: #121212;
     --fg: #e0e0e0;
     --accent: #1e88e5;
-    --table-header: #1f1f1f;
     --table-border: #2a2a2a;
     --table-row-hover: #1a1a1a;
   }
@@ -45,15 +44,7 @@
     border-bottom: 1px solid var(--table-border);
     display: flex;
     align-items: center;
-    font-weight: normal;
   }
-
-    #sidebar li strong.place {
-    color: var(--accent);
-    margin-right: 6px;
-    font-weight: bold;
-  }
-
   #sidebar li:hover {
     background-color: var(--table-row-hover);
   }
@@ -81,6 +72,11 @@
     max-width: 100%;
     border: none;
   }
+  strong.place {
+    margin-right: 6px;
+    font-weight: bold;
+    color: var(--accent);
+  }
 </style>
 </head>
 <body>
@@ -103,32 +99,27 @@
 
   let demons = [];
 
-    function createDemonListItem(demon, index) {
+  function createDemonListItem(demon, index) {
+    const place = demon.place !== undefined ? demon.place : 'N/A';
     const li = document.createElement('li');
     li.innerHTML = `
-    <img src="demonicon.webp" alt="demon icon" class="demon-icon" /> 
-    <strong class="place">Top ${demon.place ?? 'N/A'}</strong> - ${demon.name}
+      <img src="demonicon.webp" alt="demon icon" class="demon-icon" /> 
+      <strong class="place">Top ${place}</strong> - ${demon.name}
     `;
-
-    console.log(demon);
-
     li.addEventListener('click', () => {
-        selectDemon(index);
+      selectDemon(index);
     });
     return li;
-    }
-
+  }
 
   function selectDemon(index) {
     const demon = demons[index];
     if (!demon) return;
 
-    // Update active class in sidebar
     Array.from(demonListEl.children).forEach((el, i) => {
       el.classList.toggle('active', i === index);
     });
 
-    // Update detail view
     contentTitle.textContent = demon.name;
     demonDetailEl.innerHTML = `
       <p><strong>Creator:</strong> ${demon.creator}</p>
@@ -150,6 +141,8 @@
       const res = await fetch(demonsUrl);
       if (!res.ok) throw new Error('Failed to load demonlist.json');
       demons = await res.json();
+
+      console.log('Loaded demons:', demons);
 
       demonListEl.innerHTML = '';
       demons.forEach((demon, i) => {
